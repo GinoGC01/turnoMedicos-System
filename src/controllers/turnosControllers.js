@@ -1,33 +1,15 @@
 import Turno from "../models/turnos.js";
-// import Profesional from "../models/Profesional.js";
 import Consultorio from "../models/consultorios.js";
+import Profesional from "../models/professionals.js"
 import { generateSlots } from "../utils/generateSlots.js";
+import { findAvailableSlotsByMonthYear } from "../utils/findAvailableSlotsByMonthYear.js";
+import { writeInSheet } from "../utils/writeInSheets.js";
 
 export const getAvailableSlots = async (req, res) => {
   const { professionalId, month, year } = req.params;
 
   try {
-    const monthData = parseInt(month, 10) - 1;
-    const yearData = parseInt(year, 10);
-    
-    // Crear fecha de inicio del mes (primer día a las 00:00:00 hora local)
-    const startDateOfSlots = new Date(yearData, monthData, 1);
-    startDateOfSlots.setHours(0, 0, 0, 0); // Asegura que sea a medianoche (hora local)
-
-    // Crear fecha de fin del mes (último día a las 23:59:59 hora local)
-    const endOfSlots = new Date(yearData, monthData + 1, 0);
-    endOfSlots.setHours(23, 59, 59, 999); // Asegura que sea el último minuto del mes
-
-
-    // Buscar los turnos que no están reservados en el rango de fechas
-    const turno = {
-      isBooked: false,
-      profesionalId: professionalId,
-      date: { $gte: startDateOfSlots, $lte: endOfSlots }
-    };
-    
-    console.log(turno);  // Para ver el objeto de búsqueda
-
+    const turno = findAvailableSlotsByMonthYear(professionalId, month, year)
     const slots = await Turno.find(turno);
 
     if (!slots || slots.length === 0) {
@@ -42,6 +24,7 @@ export const getAvailableSlots = async (req, res) => {
 
 export const bookTurno = async (req, res) => {
   const { turnoId } = req.params;
+  const {nombre, dni} = req.body
 
   try {
     const turno = await Turno.findById(turnoId);
@@ -51,7 +34,29 @@ export const bookTurno = async (req, res) => {
 
     turno.isBooked = true;
     await turno.save();
-    res.status(200).json({ message: "Turno reservado con éxito" });
+
+
+    const profesional = await Profesional.findById(turno.profesionalId)
+    const especialista = profesional.name
+    const profesion = profesional.profession
+    const date = new Date(turno.date)
+    const dia = String(date.getUTCDate()).padStart(2, '0');
+    const mes = String(date.getUTCMonth() + 1).padStart(2, '0'); // Mes (03)
+    const año = date.getUTCFullYear();
+    const fecha = `${dia}/${mes}/${año}`
+    const hora = turno.startTime + " hs."
+
+    const sheetsSlot = {
+      nombre, dni, especialista, profesion, fecha, hora
+    }
+
+    const response = await writeInSheet(sheetsSlot)
+
+    if(!response){
+      return res.status(500).json({ message: "Error al escribir en sheets" })
+    }
+
+    res.status(200).json({ message: "Turno reservado con éxito", status: 'susces' });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
@@ -63,7 +68,6 @@ export const createTurnos = async (req, res) =>{
     const consultorio = await Consultorio.findById(consultorioId).populate(
       "professionals"
     );
-    console.log(consultorio)
     if (!consultorio)
       return res.json({ message: "consultorio no encontrado" });
 
@@ -87,13 +91,40 @@ export const createTurnos = async (req, res) =>{
 export const getAllSlots = async (req, res) => {
   try{
     const allSlots = await Turno.find()
-  if(!allSlots){
-    res.status(401).json({message: "Error al obtener los turnos"})
-  }
-  res.send({message: "turnos obtenidos con exito",
-    allSlots
-  })
+    if(!allSlots || allSlots.length === 0){
+      return res.status(401).json({message: "No se registran turnos"})
+    }
+   res.send({message: "turnos obtenidos con exito",
+      allSlots
+    })
   } catch(error){
     res.status(500).json({message: "error al objetener los turnos", error: error.message})
+  }
+}
+
+export const deleteAvailableSlots = async (req, res)=>{
+  const { professionalId, month, year } = req.params;
+  
+  try {
+    const turno = findAvailableSlotsByMonthYear(professionalId, month, year)
+    const slots = await Turno.deleteMany(turno);
+
+    if (!slots || slots.length === 0) {
+      return res.status(401).json({ message: "No se registran turnos disponibles", slots });
+    }
+    res.status(200).json({message:"turnos no tomados eliminados con exito",slots});
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+}
+
+export const deleteSlot = async (req, res)=>{
+  const {id}= req.body
+  try{
+    const slot = await Turno.deleteOne({_id:id})
+    if(!slot)return res.status(401).json({message: "no se encontro el turno"})
+    res.json({message:'turno eliminado con exito'})
+  }catch(error){
+    res.status(500).json({error: error.message})
   }
 }
