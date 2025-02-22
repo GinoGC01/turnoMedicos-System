@@ -11,7 +11,7 @@ export const createConsultorio = async (req, res) => {
     portfolio,
     presentation,
     testimonios,
-    verify,
+    verify
   } = req.body;
 
   try {
@@ -24,7 +24,7 @@ export const createConsultorio = async (req, res) => {
       portfolio,
       presentation,
       testimonios,
-      verify,
+      verify
     });
 
     await newConsultorio.save();
@@ -61,9 +61,8 @@ export const deleteConsultorio = async (req, res) => {
 };
 
 export const createProfessional = async (req, res) => {
-  const { name, profession, availability } = req.body;
+  const { name, profession, availability, services, paymentAdvance } = req.body;
   const { id } = req.params;
-
   try {
     const resultado = await Consultorio.findById(id);
     if (!resultado)
@@ -77,6 +76,8 @@ export const createProfessional = async (req, res) => {
       profession,
       availability,
       consultorio: ConsultorioID,
+      paymentAdvance,
+      services
     });
 
     await newProfesional.save();
@@ -124,3 +125,29 @@ export const getProfessionalsByConsultorios = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 };
+
+
+//temporally
+export const deleteAllProfessionals = async (req, res)=>{
+  try {
+    const resultado = await Profesional.deleteMany();
+    if (!resultado)
+      return res.status(404).json({ mensaje: "No hay profesionales" });
+    res.send({ message: "Profesionales eliminados"});
+  } catch (error) {
+    console.error("Error al eliminar los profesionales", error);
+  }
+}
+
+export const getAllProfessionals = async(req, res) =>{
+  try {
+    const resultado = await Profesional.find();
+    if (!resultado)
+      return res.status(404).json({ mensaje: "No hay profesionales" });
+    if (resultado.length === 0) return res.json({ message: "No hay profesionales disponibles en la base de datos"});
+    
+    res.json({ message: "todos los Profesionales encontrados", resultado});
+  } catch (error) {
+    console.error("Error al encontrar los profesionales", error);
+  }
+}

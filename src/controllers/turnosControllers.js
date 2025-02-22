@@ -4,6 +4,8 @@ import Profesional from "../models/professionals.js"
 import { generateSlots } from "../utils/generateSlots.js";
 import { findAvailableSlotsByMonthYear } from "../utils/findAvailableSlotsByMonthYear.js";
 import { writeInSheet } from "../utils/writeInSheets.js";
+import { sheetSlot } from "../utils/sheetSlot.js";
+import mercadopago from 'mercadopago'
 
 export const getAvailableSlots = async (req, res) => {
   const { professionalId, month, year } = req.params;
@@ -22,12 +24,13 @@ export const getAvailableSlots = async (req, res) => {
   }
 }; //todos los turnos disponibles ese mes, de ese anio
 
+
 export const bookTurno = async (req, res) => {
   const { turnoId } = req.params;
-  const {nombre, dni} = req.body
 
   try {
     const turno = await Turno.findById(turnoId);
+    
     if (!turno || turno.isBooked) {
       return res.status(400).json({ message: "Turno no disponible" });
     }
@@ -37,20 +40,9 @@ export const bookTurno = async (req, res) => {
 
 
     const profesional = await Profesional.findById(turno.profesionalId)
-    const especialista = profesional.name
-    const profesion = profesional.profession
-    const date = new Date(turno.date)
-    const dia = String(date.getUTCDate()).padStart(2, '0');
-    const mes = String(date.getUTCMonth() + 1).padStart(2, '0'); // Mes (03)
-    const año = date.getUTCFullYear();
-    const fecha = `${dia}/${mes}/${año}`
-    const hora = turno.startTime + " hs."
 
-    const sheetsSlot = {
-      nombre, dni, especialista, profesion, fecha, hora
-    }
 
-    const response = await writeInSheet(sheetsSlot)
+    const response = await writeInSheet(sheetSlot(profesional, turno, req.body))
 
     if(!response){
       return res.status(500).json({ message: "Error al escribir en sheets" })
@@ -74,7 +66,8 @@ export const createTurnos = async (req, res) =>{
     // Generar y guardar los turnos para cada profesional
     const savedSlots = [];
     for (const profesional of consultorio.professionals) {
-      const slots = generateSlots(profesional, month, year);
+      const slotTime = 1 //TO DO: revisar en services.duration
+      const slots = generateSlots(profesional, month, year, slotTime);
 
       // Guardar los turnos en la base de datos
       const savedTurnos = await Turno.insertMany(slots);
@@ -128,3 +121,16 @@ export const deleteSlot = async (req, res)=>{
     res.status(500).json({error: error.message})
   }
 }
+
+// temporally
+
+export const deleteAllSlots = async (req, res)=>{
+  const {profesionalId}= req.params
+  try{
+    const slot = await Turno.deleteMany({profesionalId})
+    if(!slot)return res.status(401).json({message: "no se encontro el turno"})
+    res.json({message:'turnos eliminados con exito'})
+  }catch(error){
+    res.status(500).json({error: error.message})
+  }
+} // delete all slots from professional in all ranges of dates, booked or not booked.

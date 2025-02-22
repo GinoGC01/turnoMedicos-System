@@ -6,6 +6,8 @@ import {
   createProfessional,
   deleteProfessional,
   getProfessionalsByConsultorios,
+  deleteAllProfessionals,
+  getAllProfessionals,
 } from "../controllers/consultoriosControllers.js";
 
 const router = express.Router();
@@ -20,5 +22,10 @@ router.get(
   "/get-professionalsByConsultorios/:id",
   getProfessionalsByConsultorios
 );
+
+//temporally
+router.delete('/delete-all-professionals', deleteAllProfessionals)
+router.get('/get-all-professionals', getAllProfessionals)
+
 
 export default router;
