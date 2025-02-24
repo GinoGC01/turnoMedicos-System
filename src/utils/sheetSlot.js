@@ -1,5 +1,6 @@
-export const sheetSlot = (professional, slot, reqBody)=>{
-    const {nombre, dni} = reqBody
+export const sheetSlot = (professional, slot, data)=>{
+
+    const {nombre, dni} = data
     const especialista = professional.name
     const profesion = professional.profession
     const date = new Date(slot.date)

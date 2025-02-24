@@ -3,10 +3,11 @@ export const writeInSheet = async (turno) =>{
     const {nombre, dni, especialista, profesion, fecha, hora} = turno
     if (!nombre || !especialista || !fecha || !hora || !dni || !profesion ) {
         const error = {
-            message: "Faltan datos requeridos: nombre, especialista, fecha o hora.",
+            message: "Faltan datos requeridos: nombre, especialista, fecha u hora.",
             status: "error"
         }
-        return error.message
+        console.log(error)
+        return error
       }
     
       const spreadsheetId = "1FEyvn7Syw5Wukm1CdtF2M6lVYkt8il8d6ndqq97xMRY";

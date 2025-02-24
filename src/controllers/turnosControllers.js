@@ -5,8 +5,6 @@ import { generateSlots } from "../utils/generateSlots.js";
 import { findAvailableSlotsByMonthYear } from "../utils/findAvailableSlotsByMonthYear.js";
 import { writeInSheet } from "../utils/writeInSheets.js";
 import { sheetSlot } from "../utils/sheetSlot.js";
-import mercadopago from 'mercadopago'
-import professionals from "../models/professionals.js";
 
 export const getAvailableSlots = async (req, res) => {
   const { professionalId, month, year } = req.params;
