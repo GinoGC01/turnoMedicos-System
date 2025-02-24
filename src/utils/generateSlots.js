@@ -1,4 +1,4 @@
-export const generateSlots = (profesional, month, year) => {
+export const generateSlots = (profesional, month, year, slotTime) => {
   const slots = [];
   const daysOn = profesional.availability.daysOn;
   const workingHours = profesional.availability.workingHours;
@@ -21,12 +21,13 @@ export const generateSlots = (profesional, month, year) => {
       );
 
       while (startTime < endTime) {
-        const slotEndTime = new Date(startTime.getTime() + 60 * 60000); // 1 hora
+        const slotEndTime = new Date(startTime.getTime() + 60 * 60000 * slotTime) ; // 1 hora
         slots.push({
           profesionalId: profesional._id,
           date: new Date(day),
           startTime: startTime.toTimeString().split(" ")[0],
           endTime: slotEndTime.toTimeString().split(" ")[0],
+          paymentAdvance:profesional.paymentAdvance
         });
         startTime.setTime(slotEndTime.getTime());
       }
