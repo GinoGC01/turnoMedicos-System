@@ -1,22 +1,23 @@
 import { writeToSheet } from "../controllers/googleSheets.js";
+import { SHEET_NAME, SPREADSHEET_ID } from "../config.js";
+
+
 export const writeInSheet = async (turno) =>{
-    const {nombre, dni, especialista, profesion, fecha, hora} = turno
-    if (!nombre || !especialista || !fecha || !hora || !dni || !profesion ) {
+    const {nombre, dni, edad, especialista, profesion, fecha, hora, payment_id, payment_payer_email, payment_payer_identification, payment_transaction_amount,payment_net_received_amount, payment_fecha  } = turno
+
+
+    if (!nombre || !especialista || !fecha || !hora || !dni || !profesion || !payment_id || !payment_payer_email || !payment_transaction_amount || !payment_net_received_amount || !edad) {
         const error = {
             message: "Faltan datos requeridos: nombre, especialista, fecha u hora.",
             status: "error"
         }
-        console.log(error)
         return error
       }
-    
-      const spreadsheetId = "1FEyvn7Syw5Wukm1CdtF2M6lVYkt8il8d6ndqq97xMRY";
-      const sheetName = "Test-ProFast"; // Nombre fijo de la hoja
-    
-      const values = [[nombre, dni,  especialista, profesion, fecha, hora]];
+
+      const values = [[nombre, dni, edad, especialista, profesion, fecha, hora, payment_id, payment_payer_email, payment_payer_identification, payment_transaction_amount,payment_fecha, payment_net_received_amount]];
     
       try {
-        const response = await writeToSheet(spreadsheetId, sheetName, values);
+        const response = await writeToSheet(SPREADSHEET_ID, SHEET_NAME, values);
         if (response) {
             const susces = { message: "Turno agendado correctamente", status:"susces" }
             return susces

@@ -2,11 +2,12 @@ import  { Payment, Preference  }  from  'mercadopago' ;
 import Turno from '../models/turnos.js';
 import { getClient } from '../utils/getClientMP.js';
 import { saveTurnoAndWritingSheet } from '../utils/saveTurnoandWritingSheets.js';
+import { HOST, NGROK_URL } from '../config.js';
 
 
 export const createOrder = async (req, res)=>{
     const { turnoId } = req.params;
-    const {nombre, dni} = req.body
+    const {nombre, dni, edad} = req.body
     try{
       const turno = await Turno.findById(turnoId).populate('profesionalId');
       
@@ -28,14 +29,14 @@ export const createOrder = async (req, res)=>{
               },
           ],
           back_urls: {
-              success: 'http://localhost:3000/api/pago-confirmado', // URL de éxito
-              failure: 'http://localhost:3000/api/pago-fallido', // URL de fallo
-              pending: 'http://localhost:3000/api/pago-pendiente', // URL de pago pendiente
+              success: `${HOST}/api/pago-confirmado`, // URL de éxito
+              failure: `${HOST}/api/pago-fallido`, // URL de fallo
+              pending: `${HOST}/api/pago-pendiente`, // URL de pago pendiente
           },
           auto_return: 'approved', // Redirigir automáticamente al cliente después del pago
-          external_reference: JSON.stringify({turnoId:turno._id, nombreCliente:nombre, dniCliente:dni}), // Guardar los detalles del turno como referencia,
+          external_reference: JSON.stringify({turnoId:turno._id, nombreCliente:nombre, dniCliente:dni, edadCliente:edad}), // Guardar los detalles del turno como referencia,
 
-          notification_url: 'https://8e8b-2803-9800-9024-87c3-1035-7b00-1516-e6ed.ngrok-free.app/api/webhook'
+          notification_url: NGROK_URL
       };
   
       // Crear la preferencia en MercadoPago
@@ -59,7 +60,7 @@ export const webhook = async (req, res)=>{
       // Consulta el estado del pago
       const paymentDetails = await payment.get({ id });
 
-      if(paymentDetails.status != 'approved') return res.status(400).json({message: 'pago no aprobado'})
+      if(paymentDetails.status != 'approved') return res.status(400).json({error: 'pago no aprobado', status: 'Error'})
 
       // Obtener el external_reference del pago
       const externalReference = paymentDetails.external_reference;
@@ -70,8 +71,20 @@ export const webhook = async (req, res)=>{
       // Extraer los datos del objeto
       const turnoId = externalData.turnoId;
 
-      const data = {nombre:externalData.nombreCliente,
-        dni:externalData.dniCliente
+      const data = {
+        nombre:externalData.nombreCliente,
+        dni:externalData.dniCliente,
+        edad:externalData.edadCliente,
+        payment_id: paymentDetails.id,
+        payment_description: paymentDetails.description,
+        payment_payer_email: paymentDetails.payer.email, // Email del comprador
+        payment_payer_identification: paymentDetails.payer.identification.number, // Número de identificación del comprador (DNI COMPRADOR)
+        payment_status: paymentDetails.status, // Estado del pago (ej: "approved")
+        payment_status_detail: paymentDetails.status_detail, // Detalle del estado (ej: "accredited")
+        payment_transaction_amount: paymentDetails.transaction_amount, // Monto total de la transacciónpayment_
+        payment_net_received_amount: paymentDetails.transaction_details.net_received_amount, // Monto neto recibido
+        payment_total_paid_amount: paymentDetails.transaction_details.total_paid_amount, // Monto total pagado
+        payment_date_approved: paymentDetails.date_approved, // Fecha y hora de aprobación del pago
       };
 
       const turnoGuardado = await saveTurnoAndWritingSheet(turnoId, data)

@@ -1,16 +1,10 @@
 import { google } from "googleapis";
-import path from "path";
-import { fileURLToPath } from "url";
+import { GOOGLE_JSON_KEY } from "../config.js";
 
-// Convertir la URL del módulo a una ruta de archivo
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-
-// Ruta absoluta al archivo google.json
-const keyFilePath = path.join(__dirname, "../credentials/google.json");
+const credentials = typeof GOOGLE_JSON_KEY === 'string' ? JSON.parse(GOOGLE_JSON_KEY) : GOOGLE_JSON_KEY;
 
 const auth = new google.auth.GoogleAuth({
-  keyFile: keyFilePath, // Usar la ruta absoluta
+  credentials: credentials,
   scopes: "https://www.googleapis.com/auth/spreadsheets",
 });
 
@@ -41,10 +35,10 @@ async function getNextEmptyRow(spreadsheetId, sheetName) {
 
 export async function writeToSheet(spreadsheetId, sheetName, values) {
   try {
-    // Obtener la próxima fila vacía
+    //próxima fila vacía
     const nextRow = await getNextEmptyRow(spreadsheetId, sheetName);
 
-    // Construir el rango dinámico (por ejemplo, "Test-ProFast!A2:D2")
+    // rango dinámico ("Test-ProFast!A2:D2")
     const range = `${sheetName}!A${nextRow}:D${nextRow}`;
 
     const request = {
