@@ -9,7 +9,7 @@ const turnoSchema = new mongoose.Schema({
   date: { type: Date, required: true },
   startTime: { type: String, required: true },
   endTime: { type: String, required: true },
-  isBooked: { type: Boolean, default: false },
+  status: { type: String, default: 'available' },
   paymentAdvance:{type: Number, default: 5000}
 });
 

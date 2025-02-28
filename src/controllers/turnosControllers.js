@@ -65,9 +65,7 @@ export const createTurnos = async (req, res) =>{
     // Generar y guardar los turnos para cada profesional
     const savedSlots = [];
     for (const profesional of consultorio.professionals) {
-      const slotTime = 1 //TO DO: revisar en services.duration
-      const slots = generateSlots(profesional, month, year, slotTime);
-
+      const slots = generateSlots(profesional, month, year);
       // Guardar los turnos en la base de datos
       const savedTurnos = await Turno.insertMany(slots);
       savedSlots.push(...savedTurnos);
