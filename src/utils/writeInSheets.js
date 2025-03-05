@@ -3,7 +3,7 @@ import { SHEET_NAME, SPREADSHEET_ID } from "../config.js";
 
 
 export const writeInSheet = async (turno) =>{
-    const {nombre, dni, edad, especialista, profesion, fecha, hora, payment_id, payment_payer_email, payment_payer_identification, payment_transaction_amount,payment_net_received_amount, payment_fecha  } = turno
+    const {nombre, dni, edad, especialista, profesion, servicio, fecha, hora, payment_id, payment_payer_email, payment_payer_identification, payment_transaction_amount,payment_net_received_amount, payment_fecha, pendingPayment} = turno
 
 
     if (!nombre || !especialista || !fecha || !hora || !dni || !profesion || !payment_id || !payment_payer_email || !payment_transaction_amount || !payment_net_received_amount || !edad) {
@@ -14,7 +14,7 @@ export const writeInSheet = async (turno) =>{
         return error
       }
 
-      const values = [[nombre, dni, edad, especialista, profesion, fecha, hora, payment_id, payment_payer_email, payment_payer_identification, payment_transaction_amount,payment_fecha, payment_net_received_amount]];
+      const values = [[nombre, dni, edad, especialista, profesion, servicio, fecha, hora, payment_id, payment_payer_email, payment_payer_identification, payment_transaction_amount,payment_fecha, payment_net_received_amount, pendingPayment]];
     
       try {
         const response = await writeToSheet(SPREADSHEET_ID, SHEET_NAME, values);

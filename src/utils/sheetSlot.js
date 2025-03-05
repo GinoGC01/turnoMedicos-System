@@ -17,6 +17,9 @@ export const sheetSlot = (professional, slot, data)=>{
     const payment_mes = String(paymentDateAproved.getUTCMonth() + 1).padStart(2, '0'); // Mes (03)
     const payment_año = paymentDateAproved.getUTCFullYear();
     const payment_fecha = `${payment_dia}/${payment_mes}/${payment_año}`
+    const servicio = professional.services.find((s) => s.id === data.servicio_id);
+    const pendingPayment = servicio.price - payment_transaction_amount
+
 
     const sheetSlotObject = {
       nombre,
@@ -24,6 +27,8 @@ export const sheetSlot = (professional, slot, data)=>{
       edad,
       especialista,
       profesion,
+      servicio:servicio.title,
+      pendingPayment,
       fecha,
       hora,
       payment_id,

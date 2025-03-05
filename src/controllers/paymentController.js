@@ -3,27 +3,27 @@ import Turno from '../models/turnos.js';
 import { getClient } from '../utils/getClientMP.js';
 import { saveTurnoAndWritingSheet } from '../utils/saveTurnoandWritingSheets.js';
 import { HOST, NGROK_URL } from '../config.js';
+import { checkAvailabilitySlot } from '../utils/checkAvailabiltySlot.js';
 
 
 export const createOrder = async (req, res)=>{
     const { turnoId } = req.params; //turno inicial
     const {nombre, dni, edad, servicioId} = req.body
     try{
+      const response = await checkAvailabilitySlot(turnoId, servicioId)
       const turno = await Turno.findById(turnoId).populate('profesionalId');
       
-      if (!turno || turno.status != 'available') {
+      if (!turno || turno.status != 'available' || response.availabilitySlot != 'available' ) {
         return res.status(400).json({ message: "Turno no disponible" });
       }
 
       const precioAdelanto = turno.paymentAdvance
-
       const preference = new Preference(getClient()); 
-
       const body = {
           items: [
               {
                   title: `Seña para Turno: ${turno.profesionalId.profession} ${turno.profesionalId.name}`,
-                  unit_price: precioAdelanto, // Precio del turno
+                  unit_price: precioAdelanto,
                   currency_id: 'ARS',
                   quantity: 1,
               },
@@ -36,7 +36,7 @@ export const createOrder = async (req, res)=>{
           auto_return: 'approved', // Redirigir automáticamente al cliente después del pago
           external_reference: JSON.stringify({turnoId:turno._id, nombreCliente:nombre, dniCliente:dni, edadCliente:edad, IdServicioProfesional:servicioId}), // Guardar los detalles del turno como referencia,
 
-          notification_url: 'https://b396-2803-9800-9024-87df-54b2-1696-e7c5-ed12.ngrok-free.app/api/webhook' //necesario actualizar en desarrollo
+          notification_url: 'https://48a8-2803-9800-9024-87df-c995-c6c3-e329-1f8c.ngrok-free.app/api/webhook' //necesario actualizar en desarrollo
       };
   
       // Crear la preferencia en MercadoPago
