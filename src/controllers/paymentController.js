@@ -2,8 +2,9 @@ import  { Payment, Preference  }  from  'mercadopago' ;
 import Turno from '../models/turnos.js';
 import { getClient } from '../utils/getClientMP.js';
 import { saveTurnoAndWritingSheet } from '../utils/saveTurnoandWritingSheets.js';
-import { HOST, NGROK_URL } from '../config.js';
 import { checkAvailabilitySlot } from '../utils/checkAvailabiltySlot.js';
+import { bodyForOrderMercadoPago } from '../utils/bodyForOrderMercadoPago.js';
+import { checkUserExistAndSave } from '../utils/checkUserExist.js';
 
 
 export const createOrder = async (req, res)=>{
@@ -17,37 +18,27 @@ export const createOrder = async (req, res)=>{
         return res.status(400).json({ message: "Turno no disponible" });
       }
 
-      const precioAdelanto = turno.paymentAdvance
-      const preference = new Preference(getClient()); 
-      const body = {
-          items: [
-              {
-                  title: `Seña para Turno: ${turno.profesionalId.profession} ${turno.profesionalId.name}`,
-                  unit_price: precioAdelanto,
-                  currency_id: 'ARS',
-                  quantity: 1,
-              },
-          ],
-          back_urls: {
-              success: `${HOST}/api/pago-confirmado`, // URL de éxito
-              failure: `${HOST}/api/pago-fallido`, // URL de fallo
-              pending: `${HOST}/api/pago-pendiente`, // URL de pago pendiente
-          },
-          auto_return: 'approved', // Redirigir automáticamente al cliente después del pago
-          external_reference: JSON.stringify({turnoId:turno._id, nombreCliente:nombre, dniCliente:dni, edadCliente:edad, IdServicioProfesional:servicioId}), // Guardar los detalles del turno como referencia,
+      const externalDataReference = {
+        nombre,
+        dni,
+        edad,
+        id: turno.id,
+        service: response.service,
+        profesionalId: turno.profesionalId._id,
+        turno
+      }
 
-          notification_url: 'https://48a8-2803-9800-9024-87df-c995-c6c3-e329-1f8c.ngrok-free.app/api/webhook' //necesario actualizar en desarrollo
-      };
+      const preference = new Preference(getClient()); 
+      const body = bodyForOrderMercadoPago(externalDataReference)
   
       // Crear la preferencia en MercadoPago
       const responseMercadoPago = await preference.create({body});
       const paymentURL = responseMercadoPago.init_point
-       // Devolver el ID de la preferencia para redirigir al cliente al checkout
+      
       res.json({urlFront: paymentURL});
     }
     catch(error){
       res.status(500).json({ message: error.message });
-  
     }
 }
 
@@ -75,6 +66,8 @@ export const webhook = async (req, res)=>{
         nombre:externalData.nombreCliente,
         dni:externalData.dniCliente,
         edad:externalData.edadCliente,
+        profesionalId:externalData.profesionalId,
+        turnoId : externalData.turnoId,
         servicio_id:externalData.IdServicioProfesional,
         payment_id: paymentDetails.id,
         payment_description: paymentDetails.description,
@@ -87,6 +80,13 @@ export const webhook = async (req, res)=>{
         payment_total_paid_amount: paymentDetails.transaction_details.total_paid_amount, // Monto total pagado
         payment_date_approved: paymentDetails.date_approved, // Fecha y hora de aprobación del pago
       };
+
+      const user = await checkUserExistAndSave(data)
+      console.log(user) // to do form by user information
+
+      if(!user){
+        return res.status(400).jason({message: "Error la registrar usuario", user})
+      }
 
       const turnoGuardado = await saveTurnoAndWritingSheet(turnoId, data)
       if(!turnoGuardado) res.status(400).json({error:'error al guardar el turno'})

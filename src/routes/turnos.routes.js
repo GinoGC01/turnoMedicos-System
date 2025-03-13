@@ -1,7 +1,6 @@
 import express from "express";
 import {
   getAvailableSlots,
-  bookTurno,
   createTurnos,
   getAllSlots,
   deleteAvailableSlots,
@@ -13,7 +12,6 @@ import { createOrder, webhook } from "../controllers/paymentController.js";
 const router = express.Router();
 
 router.get("/:professionalId/:month/:year", getAvailableSlots);
-router.post("/:turnoId/book", bookTurno);
 router.post('/generate-slots', createTurnos)
 router.get('/get-allSlots', getAllSlots)
 router.get('/get-allSlotsByProfessional/:id', getAllSlotsByProfessionals)

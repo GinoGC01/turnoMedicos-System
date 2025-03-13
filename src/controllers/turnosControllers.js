@@ -1,10 +1,7 @@
 import Turno from "../models/turnos.js";
 import Consultorio from "../models/consultorios.js";
-import Profesional from "../models/professionals.js"
 import { generateSlots } from "../utils/generateSlots.js";
 import { findAvailableSlotsByMonthYear } from "../utils/findAvailableSlotsByMonthYear.js";
-import { writeInSheet } from "../utils/writeInSheets.js";
-import { sheetSlot } from "../utils/sheetSlot.js";
 
 export const getAvailableSlots = async (req, res) => {
   const { professionalId, month, year } = req.params;
@@ -22,36 +19,6 @@ export const getAvailableSlots = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 }; //todos los turnos disponibles ese mes, de ese anio
-
-
-export const bookTurno = async (req, res) => {
-  const { turnoId } = req.params;
-
-  try {
-    const turno = await Turno.findById(turnoId);
-    
-    if (!turno || turno.isBooked) {
-      return res.status(400).json({ message: "Turno no disponible" });
-    }
-
-    turno.isBooked = true;
-    await turno.save();
-
-
-    const profesional = await Profesional.findById(turno.profesionalId)
-
-
-    const response = await writeInSheet(sheetSlot(profesional, turno, req.body))
-
-    if(!response){
-      return res.status(500).json({ message: "Error al escribir en sheets" })
-    }
-
-    res.status(200).json({ message: "Turno reservado con éxito", status: 'susces' });
-  } catch (error) {
-    res.status(500).json({ message: error.message });
-  }
-};
 
 export const createTurnos = async (req, res) =>{
   try {

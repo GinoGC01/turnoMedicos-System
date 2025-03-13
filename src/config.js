@@ -6,8 +6,9 @@ export const PORT = 3000
 export const URL = `http://localhost:`
 
 export const HOST = `${URL}${PORT}`
+const routWebHook = '/api/webhook'
 
-export const NGROK_URL = 'https://5d57-2803-9800-9024-87df-6d0d-20e9-5561-1bd6.ngrok-free.app/api/webhook' //actualizar
+export const NGROK_URL = process.env.NGROK_URL + routWebHook //actualizar
 
 export const MERCADOPAGO_API_KEY = process.env.MERCADOPAGO_API_KEY
 export const MERCADOPAGO_WEB_HOOK_KEY = process.env.MERCADOPAGO_WEB_HOOK_KEY

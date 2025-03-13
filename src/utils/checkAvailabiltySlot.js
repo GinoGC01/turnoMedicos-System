@@ -56,7 +56,8 @@ export const checkAvailabilitySlot = async (turnoId, servicioId)=>{
             initialTurno,
             profesional,
             slotsToBook,
-            availabilitySlot
+            availabilitySlot,
+            service,
         }
         return dataSlot
     } catch (error) {

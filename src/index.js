@@ -1,5 +1,4 @@
 import app from "./app.js";
-import { GOOGLE_JSON_KEY } from "./config.js";
 import { connectDB } from "./config/db.js";
 
 
