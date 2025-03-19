@@ -1,6 +1,6 @@
 import { writeInSheet } from "./writeInSheets.js";
-import { sheetSlot } from "./sheetSlot.js";
-import { checkAvailabilitySlot } from "./checkAvailabiltySlot.js";
+import { sheetSlot } from "./bodys/sheetSlot.js";
+import { checkAvailabilitySlot } from "./verifications/checkAvailabiltySlot.js";
 
 export const saveTurnoAndWritingSheet = async (turnoId, data) => {
   try {
