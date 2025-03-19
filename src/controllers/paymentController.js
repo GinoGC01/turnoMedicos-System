@@ -1,10 +1,10 @@
 import  { Payment, Preference  }  from  'mercadopago' ;
 import Turno from '../models/turnos.js';
-import { getClient } from '../utils/getClientMP.js';
+import { getClient } from '../utils/mercadoPago/getClientMP.js';
 import { saveTurnoAndWritingSheet } from '../utils/saveTurnoandWritingSheets.js';
-import { checkAvailabilitySlot } from '../utils/checkAvailabiltySlot.js';
-import { bodyForOrderMercadoPago } from '../utils/bodyForOrderMercadoPago.js';
-import { checkUserExistAndSave } from '../utils/checkUserExist.js';
+import { checkAvailabilitySlot } from '../utils/verifications/checkAvailabiltySlot.js';
+import { bodyForOrderMercadoPago } from '../utils/bodys/bodyForOrderMercadoPago.js';
+import { checkUserExistAndSave } from '../utils/verifications/checkUserExist.js';
 
 
 export const createOrder = async (req, res)=>{

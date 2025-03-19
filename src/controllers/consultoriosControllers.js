@@ -117,7 +117,7 @@ export const getProfessionalsByConsultorios = async (req, res) => {
       "professionals"
     );
     if (consultorio)
-      return res.json({ message: "consultorio creado", consultorio });
+      return res.json({ message: "consultorio encontrado con exito", consultorio });
     res.json({
       message: "No se encontro consultorio medico",
     });
