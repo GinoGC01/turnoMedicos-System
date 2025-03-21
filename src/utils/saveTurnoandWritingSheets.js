@@ -2,9 +2,9 @@ import { writeInSheet } from "./writeInSheets.js";
 import { sheetSlot } from "./bodys/sheetSlot.js";
 import { checkAvailabilitySlot } from "./verifications/checkAvailabiltySlot.js";
 
-export const saveTurnoAndWritingSheet = async (turnoId, data) => {
+export const saveTurnoAndWritingSheet = async (data) => {
   try {
-    const responseSlot = await checkAvailabilitySlot(turnoId, data.servicio_id)
+    const responseSlot = await checkAvailabilitySlot(data.turnoId, data.servicio_id)
 
     const {profesional, slotsToBook, initialTurno} = responseSlot
     

@@ -3,12 +3,14 @@ import { HOST, NGROK_URL } from "../../config.js";
 
 export const bodyForOrderMercadoPago = (dataExternalReference)=>{
     const precioAdelanto =  dataExternalReference.service.price * 0.5
+
     const referenciasExternas = {
         turnoId:dataExternalReference.id, 
         nombreCliente:dataExternalReference.nombre, 
         dniCliente:dataExternalReference.dni, 
         edadCliente:dataExternalReference.edad, 
-        IdServicioProfesional:dataExternalReference.servicioId}
+        IdServicioProfesional:dataExternalReference.service.id,
+        profesionalId: dataExternalReference.profesionalId}
 
     const body = {
               items: [

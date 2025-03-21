@@ -15,7 +15,7 @@ const atentionSchema = new mongoose.Schema({
 
 const userSchema = new mongoose.Schema({
   dni: { type: String, required: true, unique: true},
-  edad:{type: Number, required: true, unique: true},
+  edad:{type: Number, required: true},
   nombre : { type: String, required: true },
   atentions: [{type: atentionSchema}],
 });

@@ -3,6 +3,7 @@ import Profesional from "../../models/professionals.js";
 import {calculateMinDuration} from '../calculateMinDurationSvProfesional.js'
 
 export const checkAvailabilitySlot = async (turnoId, servicioId)=>{
+
     try {
         let availabilitySlot = 'available' // disponibilidad del turno
         // Obtener el turno inicial
@@ -14,6 +15,7 @@ export const checkAvailabilitySlot = async (turnoId, servicioId)=>{
         // Obtener el profesional y el servicio
         const profesional = await Profesional.findById(initialTurno.profesionalId).populate("services");
         const service = profesional.services.find((s) => s.id === servicioId);
+
 
         if (!service) {
         return { message: "Servicio no encontrado", status: false };

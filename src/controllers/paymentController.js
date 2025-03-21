@@ -64,9 +64,6 @@ export const webhook = async (req, res)=>{
       // Convertir el external_reference de vuelta a un objeto
       const externalData = JSON.parse(externalReference);
 
-      // Extraer los datos del objeto
-      const turnoId = externalData.turnoId;
-
       const data = {
         nombre:externalData.nombreCliente,
         dni:externalData.dniCliente,
@@ -93,7 +90,7 @@ export const webhook = async (req, res)=>{
         return res.status(400).jason({message: "Error la registrar usuario", user})
       }
 
-      const turnoGuardado = await saveTurnoAndWritingSheet(turnoId, data)
+      const turnoGuardado = await saveTurnoAndWritingSheet(data)
       if(!turnoGuardado) res.status(400).json({error:'error al guardar el turno'})
       res.status(200).json({message:'turno guardado con exito'});
     } catch (error) {
