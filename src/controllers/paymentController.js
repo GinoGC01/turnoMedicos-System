@@ -10,9 +10,14 @@ import { checkUserExistAndSave } from '../utils/verifications/checkUserExist.js'
 export const createOrder = async (req, res)=>{
     const { turnoId } = req.params; //turno inicial
     const {nombre, dni, edad, servicioId} = req.body
+
+    if(!turnoId || !nombre || !edad || !dni || !servicioId){
+      return res.status(400).json({ status:false, message: "Faltan datos" });
+    }
     try{
       const response = await checkAvailabilitySlot(turnoId, servicioId)
       const turno = await Turno.findById(turnoId).populate('profesionalId');
+
       
       if (!turno || turno.status != 'available' || response.availabilitySlot != 'available' ) {
         return res.status(400).json({ message: "Turno no disponible" });
