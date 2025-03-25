@@ -63,9 +63,15 @@ export const getAllSlotsByProfessionals = async (req, res) => {
   const {id} = req.params
   try{
     const allSlotsByProfessional = await Turno.find({profesionalId: id, status: 'available'})
-    if(!allSlotsByProfessional || allSlotsByProfessional.length === 0){
-      return res.status(401).json({message: "No se registran turnos", satatus:"No slots are registered"})
+    if(!allSlotsByProfessional){
+      return res.status(401).json({message: "Error al obtener los turnos", satatus:"Error"})
     }
+
+    if(allSlotsByProfessional.length === 0){
+      return res.status(200).json({message: "No se registran turnos para este profesional", status:"No slots are registered"})
+
+    }
+      
    res.json({message: "turnos obtenidos con exito",
     allSlotsByProfessional
     })

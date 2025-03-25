@@ -33,4 +33,9 @@ export const GOOGLE_JSON_KEY = {
   universe_domain: process.env.universe_domain
 };
 
+export const API_KEY_RESEND = process.env.API_KEY_RESEND
+
+
+export const API_KEY_GOOGLE_GMAIL = process.env.GOOGLE_GMAIL_API_KEY
+
 

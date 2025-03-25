@@ -4,6 +4,10 @@ import {calculateMinDuration} from '../calculateMinDurationSvProfesional.js'
 
 export const checkAvailabilitySlot = async (turnoId, servicioId)=>{
 
+    if(!turnoId, !servicioId){
+        console.log('>>>>>>>>> Error checkAvailabilitySlot: params undefined', turnoId, servicioId)
+    }
+    
     try {
         let availabilitySlot = 'available' // disponibilidad del turno
         // Obtener el turno inicial

@@ -1,8 +1,8 @@
 export const sheetSlot = (professional, slot, data)=>{
 
-    const {nombre, dni, edad, payment_id, payment_description,    payment_payer_email, payment_payer_identification,
+    const {nombre, dni, edad, email, telefono, payment_id, payment_description, payment_payer_email, payment_payer_identification,
       payment_status, payment_status_detail, payment_transaction_amount,payment_net_received_amount,payment_total_paid_amount,
-      payment_date_approved
+      payment_date_approved, nombreConsultorio
      } = data
     const especialista = professional.name
     const profesion = professional.profession
@@ -17,7 +17,7 @@ export const sheetSlot = (professional, slot, data)=>{
     const payment_mes = String(paymentDateAproved.getUTCMonth() + 1).padStart(2, '0'); // Mes (03)
     const payment_año = paymentDateAproved.getUTCFullYear();
     const payment_fecha = `${payment_dia}/${payment_mes}/${payment_año}`
-    const servicio = professional.services.find((s) => s.id === data.servicio_id);
+    const servicio = professional.services.find((s) => s.id === data.servicioId);
     const pendingPayment = servicio.price - payment_transaction_amount
 
 
@@ -25,7 +25,10 @@ export const sheetSlot = (professional, slot, data)=>{
       nombre,
       dni,
       edad,
+      email,
+      telefono,
       especialista,
+      nombreConsultorio,
       profesion,
       servicio:servicio.title,
       pendingPayment,
@@ -42,6 +45,7 @@ export const sheetSlot = (professional, slot, data)=>{
       payment_total_paid_amount,
       payment_fecha
     }
+
 
     return sheetSlotObject
 }

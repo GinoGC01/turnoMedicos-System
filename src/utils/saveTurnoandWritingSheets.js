@@ -4,12 +4,14 @@ import { checkAvailabilitySlot } from "./verifications/checkAvailabiltySlot.js";
 
 export const saveTurnoAndWritingSheet = async (data) => {
   try {
-    const responseSlot = await checkAvailabilitySlot(data.turnoId, data.servicio_id)
+    const responseSlot = await checkAvailabilitySlot(data.turnoId, data.servicioId)
+
 
     const {profesional, slotsToBook, initialTurno} = responseSlot
     
     // Escribir en la hoja de cálculo
     const response = await writeInSheet(sheetSlot(profesional, initialTurno, data));
+
 
     if (response.status === 'error') {
       console.log('error al escribir en la hoja de sheets')
@@ -22,8 +24,8 @@ export const saveTurnoAndWritingSheet = async (data) => {
       await slot.save();
     }
 
-    return { message: "Turno reservado y datos guardados en sheets", status: true };
+    return { message: "Turno reservado y datos guardados en sheets", status: true, responseSlot};
   } catch (error) {
-    return { message: error.message, status: false };
+    return { message: error.message, status: false};
   }
 }
