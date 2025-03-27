@@ -20,7 +20,7 @@ const userSchema = new mongoose.Schema({
   dni: { type: String, required: true, unique: true},
   edad:{type: Number, required: true},
   nombre : { type: String, required: true },
-  email: {type: String, require: true, unique:true},
+  email: {type: String, require: true},
   telefono: {type: Number, require: true},
   atentions: [{type: atentionSchema}],
 });

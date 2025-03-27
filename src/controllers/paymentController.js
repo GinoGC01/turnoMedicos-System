@@ -8,7 +8,7 @@ import { dataReferenceSchema } from '../schemas/dataReferenceSchema.js';
 import Consultorio from '../models/consultorios.js';
 
 
-let dataReference 
+let dataReference = {}
 
 export const createOrder = async (req, res)=>{
     const { turnoId } = req.params; //turno inicial
@@ -48,7 +48,7 @@ export const createOrder = async (req, res)=>{
         console.error(response);
         return res.status(400).json(response)
       } else {
-        console.log('El objeto es válido');
+        console.log('--->>> objeto válido');
         dataReference = value
       }
 
@@ -69,12 +69,14 @@ export const createOrder = async (req, res)=>{
 export const webhook = async (req, res)=>{
   const { id, topic} = req.query;
   const payment = new Payment(getClient());
+  console.log('dataReference status before "payment": payment >>> ', dataReference)
 
-  if(topic === 'payment' ){
-    // console.log('dataReference status: payment >>> ',dataReference)
+  if(topic === 'payment' && dataReference != {} ){
     const response = await webhookPayment(payment, id, dataReference)
+    dataReference = {}
     res.status(response.status).json(response.json)
   }
+
   res.status(204)
 
 }
