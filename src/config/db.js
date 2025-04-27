@@ -1,10 +1,10 @@
-import mongoose from "mongoose";
+import mongoose from 'mongoose'
 
 export const connectDB = async () => {
   try {
-    await mongoose.connect("mongodb://localhost/turnosdb");
-    console.log(">>> DB is connected");
+    await mongoose.connect('mongodb://localhost/turnosdb')
+    console.log('>>> DB is connected')
   } catch (error) {
-    console.log(error);
+    console.log(error)
   }
-};
+}

@@ -1,31 +1,21 @@
-import express from "express";
-import {
-  createConsultorio,
-  getConsultorios,
-  deleteConsultorio,
-  createProfessional,
-  deleteProfessional,
-  getProfessionalsByConsultorios,
-  deleteAllProfessionals,
-  getAllProfessionals,
-} from "../controllers/consultoriosControllers.js";
+import express from 'express'
+import { ConsultoriosController } from '../controllers/consultoriosControllers.js'
 
-const router = express.Router();
+const router = express.Router()
 
-router.post("/create-consultorio", createConsultorio);
-router.get("/get-consultorios", getConsultorios);
-router.delete("/delete-consultorio/:id", deleteConsultorio);
+router.post('/create-consultorio', ConsultoriosController.createConsultorio)
+router.get('/get-consultorios', ConsultoriosController.getConsultorios)
+router.delete('/delete-consultorio/:id', ConsultoriosController.deleteConsultorio)
 
-router.post("/create-professional/:id", createProfessional);
-router.delete("/delete-professional/:id", deleteProfessional);
+router.post('/create-professional/:id', ConsultoriosController.createProfessional)
+router.delete('/delete-professional/:id', ConsultoriosController.deleteProfessional)
 router.get(
-  "/get-professionalsByConsultorios/:id",
-  getProfessionalsByConsultorios
-);
+  '/get-professionalsByConsultorios/:id',
+  ConsultoriosController.getProfessionalsByConsultorios
+)
 
-//temporally
-router.delete('/delete-all-professionals', deleteAllProfessionals)
-router.get('/get-all-professionals', getAllProfessionals)
+// temporally
+router.delete('/delete-all-professionals', ConsultoriosController.deleteAllProfessionals)
+router.get('/get-all-professionals', ConsultoriosController.getAllProfessionals)
 
-
-export default router;
+export default router

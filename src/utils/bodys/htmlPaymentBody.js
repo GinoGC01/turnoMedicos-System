@@ -1,7 +1,8 @@
+/* eslint-disable camelcase */
 export const htmlPaymentBody = (dataSheets) => {
-    const {nombre, especialista, profesion, servicio, fecha, hora, payment_id, payment_payer_email, payment_transaction_amount, payment_payer_identification, pendingPayment, payment_fecha, nombreConsultorio} = dataSheets
+  const { nombre, especialista, profesion, servicio, fecha, hora, payment_id, payment_payer_email, payment_transaction_amount, payment_payer_identification, pendingPayment, payment_fecha, nombreConsultorio } = dataSheets
 
-    const html = `<html>
+  const html = `<html>
     <head>
     <style>
           body {
@@ -151,6 +152,5 @@ export const htmlPaymentBody = (dataSheets) => {
     </div>
     </body>
     </html>`
-    return html
-
+  return html
 }

@@ -1,28 +1,29 @@
-import mongoose from "mongoose";
+import mongoose from 'mongoose'
 const atentionSchema = new mongoose.Schema({
-    profesionalId: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "Profesional",
-      },
-    servicioId: {
-        type: String, required:true
-    },
-    turnoId:{
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "Turno",
-    },
-    dateTurno:{
-      type: Date, required: true
-    }
+  profesionalId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Profesional'
+  },
+  servicioId: {
+    type: String, required: true
+  },
+  turnoId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Turno'
+  },
+  dateTurno: {
+    type: Date, required: true
+  }
 })
 
 const userSchema = new mongoose.Schema({
-  dni: { type: String, required: true, unique: true},
-  edad:{type: Number, required: true},
-  nombre : { type: String, required: true },
-  email: {type: String, require: true},
-  telefono: {type: Number, require: true},
-  atentions: [{type: atentionSchema}],
-});
+  dni: { type: String, required: true, unique: true },
+  edad: { type: Number, required: true },
+  nombre: { type: String, required: true },
+  email: { type: String, require: true },
+  telefono: { type: Number, require: true },
+  password: { type: String, require: true },
+  atentions: [{ type: atentionSchema }]
+})
 
-export default mongoose.model("User", userSchema);
+export default mongoose.model('User', userSchema)
