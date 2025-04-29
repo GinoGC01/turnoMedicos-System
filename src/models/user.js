@@ -23,7 +23,11 @@ const userSchema = new mongoose.Schema({
   email: { type: String, require: true },
   telefono: { type: Number, require: true },
   password: { type: String, require: true },
-  atentions: [{ type: atentionSchema }]
+  atentions: [{ type: atentionSchema }],
+  rol: {
+    type: String,
+    default: 'user'
+  }
 })
 
 export default mongoose.model('User', userSchema)

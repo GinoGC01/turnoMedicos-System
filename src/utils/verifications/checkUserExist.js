@@ -16,7 +16,7 @@ export const checkUserExistAndSave = async (data) => {
     const dateTurno = new Date(fechaTurno)
 
     if (!user) {
-      await authController.registerBySlot(data)
+      await authController.registerUserBySlot(data)
     } else {
       const nuevaAtencion = { profesionalId, servicioId, turnoId, dateTurno }
       // delete atention registered

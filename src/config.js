@@ -33,3 +33,5 @@ export const GOOGLE_JSON_KEY = {
 export const API_KEY_RESEND = process.env.API_KEY_RESEND
 
 export const API_KEY_GOOGLE_GMAIL = process.env.GOOGLE_GMAIL_API_KEY
+
+export const JWT_KEY = process.env.JWT_KEY

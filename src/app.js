@@ -4,11 +4,16 @@ import turnosRoutes from './routes/turnos.routes.js'
 import consultoriosRoutes from './routes/consultorios.routes.js'
 import userRouter from './routes/users.routes.js'
 import { CORS } from './middlewares/cors.js'
+import cookieParser from 'cookie-parser'
+import { authSession } from './middlewares/authSession.js'
 
 const app = express()
 app.use(morgan('dev'))
 app.use(CORS())
 app.use(express.json())
+app.use(cookieParser())
+app.use(authSession)
+
 app.use('/api', turnosRoutes)
 app.use('/api', consultoriosRoutes)
 app.use('/api', userRouter)
